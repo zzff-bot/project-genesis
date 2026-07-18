@@ -28,7 +28,7 @@ export default function LandingPage() {
     >
       {/* ── 第一张图片（底层，全屏铺满） ── */}
       <img
-        src="/hero-1.png"
+        src="./hero-1.png"
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
@@ -38,7 +38,7 @@ export default function LandingPage() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'url(/hero-2.png)',
+          backgroundImage: 'url(./hero-2.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           maskImage: visible
