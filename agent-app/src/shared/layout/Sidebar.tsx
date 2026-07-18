@@ -17,7 +17,7 @@ interface NavItem {
 }
 
 const mainNav: NavItem[] = [
-  { to: '/', icon: LayoutDashboard, label: '首页', end: true },
+  { to: '/dashboard', icon: LayoutDashboard, label: '首页', end: true },
   { to: '/agents', icon: Bot, label: '智能体', end: true },
   { to: '/agents/create', icon: PlusCircle, label: '创建' },
   { to: '/conversations', icon: MessageSquare, label: '对话' },

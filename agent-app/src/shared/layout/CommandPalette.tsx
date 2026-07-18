@@ -41,7 +41,7 @@ export function CommandPalette() {
       label: '仪表盘',
       description: '返回首页',
       icon: <Search size={17} />,
-      action: () => navigate('/'),
+      action: () => navigate('/dashboard'),
     },
     {
       id: 'create-agent',

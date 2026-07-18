@@ -495,4 +495,90 @@
   .transform-3d {
     transform-style: preserve-3d;
   }
+
+  /* ── 发光按钮·黑（首页界面） ── */
+  .glow-btn-dark {
+    --glow-color: rgba(255, 255, 255, 0.85);
+    --glow-spread: rgba(255, 255, 255, 0.25);
+    border: 0.15em solid rgba(255, 255, 255, 0.5);
+    padding: 0.85em 2.8em;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 1em;
+    outline: none;
+    cursor: pointer;
+    box-shadow:
+      0 0 0.6em 0.1em rgba(255, 255, 255, 0.2),
+      0 0 2.5em 0.5em rgba(255, 255, 255, 0.1),
+      inset 0 0 0.4em 0.08em rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.5);
+    position: relative;
+    transition: all 0.35s ease;
+    letter-spacing: 0.03em;
+    backdrop-filter: blur(8px);
+  }
+
+  .glow-btn-dark::after {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    top: 120%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2em);
+    opacity: 0.5;
+    transform: perspective(1.5em) rotateX(35deg) scale(1, 0.6);
+  }
+
+  .glow-btn-dark:hover {
+    color: #000;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 0 0.8em 0.2em rgba(255, 255, 255, 0.35),
+      0 0 3.5em 1em rgba(255, 255, 255, 0.2),
+      inset 0 0 0.5em 0.15em rgba(255, 255, 255, 0.3);
+    text-shadow: none;
+  }
+
+  .glow-btn-dark:active {
+    box-shadow:
+      0 0 0.4em 0.15em rgba(255, 255, 255, 0.3),
+      0 0 2em 1em rgba(255, 255, 255, 0.15);
+  }
+
+  /* ── 发光按钮·黑（次要） ── */
+  .glow-btn-dark-subtle {
+    border: 0.12em solid rgba(255, 255, 255, 0.25);
+    padding: 0.85em 2.8em;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 16px;
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 1em;
+    outline: none;
+    cursor: pointer;
+    box-shadow:
+      0 0 0.3em 0.05em rgba(255, 255, 255, 0.1),
+      inset 0 0 0.2em 0.04em rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 0.3em rgba(255, 255, 255, 0.3);
+    position: relative;
+    transition: all 0.35s ease;
+    letter-spacing: 0.03em;
+    backdrop-filter: blur(8px);
+  }
+
+  .glow-btn-dark-subtle:hover {
+    color: rgba(0, 0, 0, 0.9);
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 0 0.6em 0.15em rgba(255, 255, 255, 0.3),
+      0 0 2.5em 0.6em rgba(255, 255, 255, 0.15),
+      inset 0 0 0.4em 0.1em rgba(255, 255, 255, 0.25);
+    text-shadow: none;
+  }
 }

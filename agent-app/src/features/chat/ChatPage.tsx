@@ -36,7 +36,7 @@ export default function ChatPage() {
   // 如果智能体不存在，重定向回首页
   useEffect(() => {
     if (agentId && state.agents.length > 0 && !agent) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [agent, state.agents, agentId, navigate]);
 
@@ -56,7 +56,7 @@ export default function ChatPage() {
     if (state.isStreaming && !confirm('正在接收回复，确定要离开吗？')) {
       return;
     }
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleSend = async (content: string) => {

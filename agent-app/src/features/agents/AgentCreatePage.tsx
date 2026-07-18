@@ -138,7 +138,7 @@ function StepIntent({ intent, onChange, onAnalyze, onSkip, analyzing, navigate: 
   return (
     <motion.div {...fadeUp} className="flex flex-col items-center pt-16 text-center">
       {/* 返回 */}
-      <button onClick={() => nav('/')} className="self-start flex items-center gap-1.5 text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text)] transition-colors mb-16 cursor-pointer">
+      <button onClick={() => nav('/dashboard')} className="self-start flex items-center gap-1.5 text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text)] transition-colors mb-16 cursor-pointer">
         <ArrowLeft size={15} /> 返回
       </button>
 
