@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AgentProvider } from '@/contexts/AgentContext';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { AppShell } from '@/shared/layout';
@@ -23,7 +23,7 @@ function ThemeSync() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AgentProvider>
         <ThemeSync />
         <CommandPalette />
@@ -61,7 +61,7 @@ export default function App() {
           </Routes>
         </AppShell>
       </AgentProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
