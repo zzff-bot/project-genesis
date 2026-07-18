@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-agent-builder": {
+      "source": "claude-office-skills/skills",
+      "sourceType": "github",
+      "skillPath": "ai-agent-builder/SKILL.md",
+      "computedHash": "98298e175649a15d7771e112eb0029a5055144a9481da436138b909e9a12a8b2"
+    },
+    "ai-elements-chatbot": {
+      "source": "secondsky/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/ai-elements-chatbot/skills/ai-elements-chatbot/SKILL.md",
+      "computedHash": "7be258ad6d28a632624ebc87e169deebd5f605a4963aaa508272f39d24c1703f"
+    },
+    "better-chatbot": {
+      "source": "secondsky/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/better-chatbot/skills/better-chatbot/SKILL.md",
+      "computedHash": "98daed7c5eacff23a92136e8a93bf05a3da65a1ebab8ef3abad826b059e57371"
+    },
+    "deploy-to-vercel": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/deploy-to-vercel/SKILL.md",
+      "computedHash": "3a0481591523c55ecfe2569b6b28b2dcbfa3742367667697219d29170981ad53"
+    },
+    "expo-react-native-typescript": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "skillPath": "expo-react-native-typescript/SKILL.md",
+      "computedHash": "ae6a3db1d4b800bf9d69e64600bbdccadbacd22b127feeb71a041c56ad4f1e55"
+    },
+    "fastapi-backend-template": {
+      "source": "eng0ai/eng0-template-skills",
+      "sourceType": "github",
+      "skillPath": "fastapi-backend-template/SKILL.md",
+      "computedHash": "48930dde62a0816e19d4a0cf3d4a8acbfc223c1f5bf0bcece2b0cac9fe10de1a"
+    },
+    "react-mcp": {
+      "source": "assistant-ui/skills",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/react-mcp/SKILL.md",
+      "computedHash": "ab120f4deb54560a9f66bd8d95882546eeb5b896ae07b51d7ad319373714d8bd"
+    },
+    "react-native-dev": {
+      "source": "minimax-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-dev/SKILL.md",
+      "computedHash": "1547e61b0870583672cdd76d21176ac4df92ea049a30377fe96f5c41124a244c"
+    },
+    "secure-auth": {
+      "source": "jamditis/claude-skills-journalism",
+      "sourceType": "github",
+      "skillPath": "security-toolkit/skills/secure-auth/SKILL.md",
+      "computedHash": "7f41579c987f01824e0c4946f55f57eef430db6555db6fbc53ce25feb254316e"
+    },
+    "vercel-ai-sdk-expert": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-ai-sdk-expert/SKILL.md",
+      "computedHash": "480ab90b1054d6cd2a843be9a740cb11ac95d54732df4d8c754c1a1e703a9e25"
+    },
+    "vercel-optimize": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-optimize/SKILL.md",
+      "computedHash": "fb87d3a135fef30748f772200a9f161f780b5a16830e8e70a3a126195cb16963"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "6b526d013e28073246a36f99b529bc43745d30832ecfa8217b359c34f260ca6b"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-skills/SKILL.md",
+      "computedHash": "a804b4e848059822638c390359976f7021380bcefb1469d473aa4e9202c15ecb"
+    },
+    "vercel-react-view-transitions": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-view-transitions/SKILL.md",
+      "computedHash": "db55fee57546ae8b7cee3d9cc08e8e810bf78cce43e2d3dd26eea69e1bf357ae"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "d8e7d3afe37dcc8a97b99ffb5afdb4d0919ae0092ea8b68f44eb201f035e33ac"
+    }
+  }
+}

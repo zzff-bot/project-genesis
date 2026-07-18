@@ -1,0 +1,498 @@
+@import "tailwindcss";
+
+/* ================================================================
+   Project Genesis — Design System
+   设计哲学：Elegant · Minimal · Premium · Immersive · Calm
+   参考：Apple · Anthropic · Linear · Notion · Raycast · Arc Browser
+   ================================================================ */
+
+/* ===== 基础样式 ===== */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    letter-spacing: -0.01em;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+  }
+
+  /* 精致滚动条 */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+  }
+
+  /* 选中文本 */
+  ::selection {
+    background: var(--color-primary-glow);
+    color: var(--color-text);
+  }
+}
+
+/* ================================================================
+   CSS 变量 — Light Mode (默认)
+   单一品牌色 + 全部中性色，克制而高级
+   ================================================================ */
+:root {
+  /* ── 品牌色（唯一 accent） ── */
+  --color-primary: #5b5fe3;
+  --color-primary-light: #7b7fef;
+  --color-primary-dark: #4649c7;
+  --color-primary-glow: rgba(91, 95, 227, 0.12);
+
+  /* ── 背景层级（近白 + 微妙暖调） ── */
+  --color-bg: #fafaf9;
+  --color-bg-secondary: #f5f5f3;
+  --color-bg-tertiary: #eeedeb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #fafaf9;
+
+  /* ── 文本 ── */
+  --color-text: #18181b;
+  --color-text-secondary: #6b6b73;
+  --color-text-tertiary: #a1a1aa;
+
+  /* ── 边框 ── */
+  --color-border: #e8e8e5;
+  --color-border-light: rgba(232, 232, 229, 0.5);
+
+  /* ── 消息气泡 ── */
+  --color-user-bubble: #5b5fe3;
+  --color-user-text: #ffffff;
+  --color-assistant-bubble: #f5f5f3;
+  --color-assistant-text: #18181b;
+
+  /* ── 圆角（更精细的层级） ── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-bubble: 1.125rem;
+
+  /* ── 阴影（精致多层） ── */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.05), 0 1px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-bubble: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 0 1px var(--color-primary-glow),
+    0 0 24px var(--color-primary-glow);
+
+  /* ── Glassmorphism（微弱克制） ── */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(232, 232, 229, 0.5);
+  --glass-border-strong: rgba(200, 200, 196, 0.55);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  --glass-blur: 14px;
+  --glass-blur-strong: 22px;
+
+  /* ── 间距 ── */
+  --spacing-page: 2rem;
+  --spacing-section: 2.5rem;
+
+  /* ── 字体 ── */
+  --font-body: 'Inter', 'Geist', system-ui, -apple-system, sans-serif;
+  --font-display: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* ================================================================
+   语义 Token
+   ================================================================ */
+:root {
+  --intent-success: #10b981;
+  --intent-success-bg: rgba(16, 185, 129, 0.08);
+  --intent-warning: #f59e0b;
+  --intent-warning-bg: rgba(245, 158, 11, 0.08);
+  --intent-error: #ef4444;
+  --intent-error-bg: rgba(239, 68, 68, 0.08);
+  --intent-info: #5b5fe3;
+  --intent-info-bg: rgba(91, 95, 227, 0.08);
+
+  --interactive-hover: var(--color-surface-hover);
+  --interactive-active: var(--color-bg-tertiary);
+
+  --focus-ring-color: var(--color-primary-glow);
+  --focus-ring-width: 2px;
+}
+
+/* ================================================================
+   组件 Token
+   ================================================================ */
+:root {
+  --btn-radius: var(--radius-xl);
+  --btn-font-weight: 500;
+  --card-radius: var(--radius-2xl);
+  --card-hover-lift: -2px;
+  --input-radius: var(--radius-xl);
+  --badge-radius: 9999px;
+  --avatar-radius: var(--radius-lg);
+  --tab-radius: var(--radius-lg);
+  --modal-radius: var(--radius-2xl);
+  --toast-radius: var(--radius-lg);
+  --density-gap: 1rem;
+  --density-padding: 1.25rem;
+}
+
+/* ================================================================
+   Dark Mode — OLED 高级质感
+   ================================================================ */
+.dark {
+  --color-primary: #7b7fef;
+  --color-primary-light: #9b9ff3;
+  --color-primary-dark: #5b5fe3;
+  --color-primary-glow: rgba(123, 127, 239, 0.1);
+
+  --color-bg: #000000;
+  --color-bg-secondary: #0c0c0c;
+  --color-bg-tertiary: #161616;
+  --color-surface: #0c0c0c;
+  --color-surface-hover: #141414;
+
+  --color-text: #f5f5f4;
+  --color-text-secondary: #8e8e93;
+  --color-text-tertiary: #636366;
+
+  --color-border: #1f1f1f;
+  --color-border-light: rgba(31, 31, 31, 0.5);
+
+  --color-user-bubble: #7b7fef;
+  --color-user-text: #ffffff;
+  --color-assistant-bubble: #161616;
+  --color-assistant-text: #f5f5f4;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-bubble: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  --glass-bg: rgba(12, 12, 12, 0.55);
+  --glass-bg-strong: rgba(12, 12, 12, 0.82);
+  --glass-bg-subtle: rgba(12, 12, 12, 0.28);
+  --glass-border: rgba(31, 31, 31, 0.5);
+  --glass-border-strong: rgba(45, 45, 45, 0.55);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  --intent-success: #34d399;
+  --intent-success-bg: rgba(52, 211, 153, 0.1);
+  --intent-warning: #fbbf24;
+  --intent-warning-bg: rgba(251, 191, 36, 0.1);
+  --intent-error: #f87171;
+  --intent-error-bg: rgba(248, 113, 113, 0.1);
+  --intent-info: #7b7fef;
+  --intent-info-bg: rgba(123, 127, 239, 0.1);
+}
+
+/* 自动跟随系统 */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-primary: #7b7fef;
+    --color-primary-light: #9b9ff3;
+    --color-primary-dark: #5b5fe3;
+    --color-primary-glow: rgba(123, 127, 239, 0.1);
+    --color-bg: #000000;
+    --color-bg-secondary: #0c0c0c;
+    --color-bg-tertiary: #161616;
+    --color-surface: #0c0c0c;
+    --color-surface-hover: #141414;
+    --color-text: #f5f5f4;
+    --color-text-secondary: #8e8e93;
+    --color-text-tertiary: #636366;
+    --color-border: #1f1f1f;
+    --color-border-light: rgba(31, 31, 31, 0.5);
+    --color-user-bubble: #7b7fef;
+    --color-user-text: #ffffff;
+    --color-assistant-bubble: #161616;
+    --color-assistant-text: #f5f5f4;
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-bubble: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(12, 12, 12, 0.55);
+    --glass-bg-strong: rgba(12, 12, 12, 0.82);
+    --glass-bg-subtle: rgba(12, 12, 12, 0.28);
+    --glass-border: rgba(31, 31, 31, 0.5);
+    --glass-border-strong: rgba(45, 45, 45, 0.55);
+    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ================================================================
+   5 种视觉风格主题（克制差异，保持高级感）
+   ================================================================ */
+
+/* Modern — 蓝紫（默认已定义） */
+.theme-modern {}
+
+/* Warm — 温润琥珀 */
+.theme-warm {
+  --color-primary: #b8700a;
+  --color-primary-light: #d4891a;
+  --color-primary-dark: #945a08;
+  --color-primary-glow: rgba(184, 112, 10, 0.1);
+  --color-bg: #fdfbf7;
+  --color-bg-secondary: #faf6ef;
+  --color-bg-tertiary: #f5ede0;
+  --color-surface: #ffffff;
+  --color-surface-hover: #fdfbf7;
+  --color-text: #2d1f0a;
+  --color-text-secondary: #7a5a30;
+  --color-text-tertiary: #b8956e;
+  --color-border: #e8ddd0;
+  --color-user-bubble: #b8700a;
+  --color-user-text: #ffffff;
+  --color-assistant-bubble: #faf6ef;
+  --color-assistant-text: #2d1f0a;
+}
+.dark .theme-warm {
+  --color-primary: #d4891a;
+  --color-primary-light: #e0a040;
+  --color-primary-dark: #b8700a;
+  --color-primary-glow: rgba(212, 137, 26, 0.12);
+  --color-bg: #000000;
+  --color-bg-secondary: #0e0a04;
+  --color-bg-tertiary: #1a1208;
+  --color-surface: #0e0a04;
+  --color-surface-hover: #140e06;
+  --color-text: #f5efe4;
+  --color-text-secondary: #b8956e;
+  --color-text-tertiary: #7a5a30;
+  --color-border: #1f160a;
+  --color-user-bubble: #d4891a;
+  --color-user-text: #0e0a04;
+  --color-assistant-bubble: #1a1208;
+  --color-assistant-text: #f5efe4;
+}
+
+/* Playful — 柔和玫瑰 */
+.theme-playful {
+  --color-primary: #d4608a;
+  --color-primary-light: #e080a0;
+  --color-primary-dark: #c04070;
+  --color-primary-glow: rgba(212, 96, 138, 0.1);
+  --color-bg: #fdfafb;
+  --color-bg-secondary: #faf5f7;
+  --color-bg-tertiary: #f5e8ec;
+  --color-surface: #ffffff;
+  --color-surface-hover: #fdfafb;
+  --color-text: #2d1520;
+  --color-text-secondary: #7a4058;
+  --color-text-tertiary: #b88090;
+  --color-border: #e8d5dc;
+  --color-user-bubble: #d4608a;
+  --color-user-text: #ffffff;
+  --color-assistant-bubble: #faf5f7;
+  --color-assistant-text: #2d1520;
+}
+.dark .theme-playful {
+  --color-primary: #e080a0;
+  --color-primary-light: #eaa0b8;
+  --color-primary-dark: #d4608a;
+  --color-primary-glow: rgba(224, 128, 160, 0.1);
+  --color-bg: #000000;
+  --color-bg-secondary: #0c0608;
+  --color-bg-tertiary: #180e12;
+  --color-surface: #0c0608;
+  --color-surface-hover: #120a0e;
+  --color-text: #f5eef0;
+  --color-text-secondary: #b88090;
+  --color-text-tertiary: #7a4058;
+  --color-border: #1a1014;
+  --color-user-bubble: #e080a0;
+  --color-user-text: #0c0608;
+  --color-assistant-bubble: #180e12;
+  --color-assistant-text: #f5eef0;
+}
+
+/* ================================================================
+   Glassmorphism 工具类
+   ================================================================ */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border-strong);
+    backdrop-filter: blur(var(--glass-blur-strong));
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-subtle {
+    background: var(--glass-bg-subtle);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* ================================================================
+   动画 — 克制而自然
+   ================================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%      { opacity: 0.6;  transform: scale(1.15); }
+}
+
+.animate-fade-in  { animation: fadeIn 0.35s ease-out forwards; }
+.animate-scale-in { animation: fadeInScale 0.3s ease-out forwards; }
+
+/* 打字指示器 */
+.typing-indicator {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  align-items: center;
+}
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+  animation: pulse-dot 1.5s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ================================================================
+   Markdown 渲染样式
+   ================================================================ */
+.message-content h1 { font-size: 1.4rem; font-weight: 650; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em; }
+.message-content h2 { font-size: 1.15rem; font-weight: 600; margin: 0.5rem 0 0.25rem; }
+.message-content h3 { font-size: 1.05rem; font-weight: 600; margin: 0.5rem 0 0.25rem; }
+.message-content p { margin: 0.25rem 0; line-height: 1.72; }
+.message-content ul, .message-content ol { margin: 0.25rem 0; padding-left: 1.5rem; }
+.message-content li { margin: 0.15rem 0; }
+.message-content code {
+  background: var(--color-bg-tertiary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: var(--font-mono);
+}
+.message-content pre {
+  background: #1a1a1e;
+  color: #e4e4e7;
+  padding: 1rem 1.25rem;
+  border-radius: 0.625rem;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+  font-size: 0.875em;
+}
+.dark .message-content pre {
+  background: #141418;
+  color: #e4e4e7;
+  border: 1px solid #1f1f1f;
+}
+.message-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+.message-content blockquote {
+  border-left: 2px solid var(--color-primary);
+  padding-left: 0.875rem;
+  margin: 0.5rem 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+.message-content a {
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-primary-glow);
+  transition: border-color 0.2s;
+}
+.message-content a:hover {
+  border-bottom-color: var(--color-primary);
+}
+.message-content table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  width: 100%;
+}
+.message-content th, .message-content td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.message-content th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+}
+
+/* ================================================================
+   工具类
+   ================================================================ */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  }
+
+  /* 3D 透视变换 */
+  .perspective-distant {
+    perspective: 1200px;
+  }
+
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+}
