@@ -1,7 +1,11 @@
 import type { ChatMessage } from '@/shared/types';
 
-const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
-const DEEPSEEK_BASE_URL = 'https://api.deepseek.com/v1/chat/completions';
+// Cloudflare Worker 代理地址（生产环境使用，API Key 不暴露给前端）
+const API_PROXY_URL = import.meta.env.VITE_API_PROXY_URL || '';
+// 直接调用 DeepSeek 的 API Key（仅本地开发回退使用）
+const DIRECT_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || '';
+
+const BASE_URL = API_PROXY_URL || 'https://api.deepseek.com/v1/chat/completions';
 const MODEL = 'deepseek-chat';
 const MAX_HISTORY = 20; // 最多携带最近 20 轮对话
 
@@ -17,6 +21,20 @@ interface DeepSeekResponse {
     finish_reason: string;
   }>;
   usage: { prompt_tokens: number; completion_tokens: number };
+}
+
+/**
+ * 构建请求头：代理模式不带 Authorization，直连模式带 API Key
+ */
+function buildHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  // 代理模式下不需要发送 Authorization（Worker 会添加）
+  if (!API_PROXY_URL && DIRECT_API_KEY) {
+    headers['Authorization'] = `Bearer ${DIRECT_API_KEY}`;
+  }
+  return headers;
 }
 
 /**
@@ -41,12 +59,9 @@ export async function sendMessage(
   // 添加新消息
   messages.push({ role: 'user', content: newMessage });
 
-  const response = await fetch(DEEPSEEK_BASE_URL, {
+  const response = await fetch(BASE_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-    },
+    headers: buildHeaders(),
     body: JSON.stringify({
       model: MODEL,
       messages,
@@ -82,12 +97,9 @@ export async function* sendMessageStream(
   }
   messages.push({ role: 'user', content: newMessage });
 
-  const response = await fetch(DEEPSEEK_BASE_URL, {
+  const response = await fetch(BASE_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-    },
+    headers: buildHeaders(),
     body: JSON.stringify({
       model: MODEL,
       messages,

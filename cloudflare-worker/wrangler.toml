@@ -1,0 +1,13 @@
+# Cloudflare Worker 配置
+# 部署命令：npx wrangler deploy
+
+name = "deepseek-api-proxy"
+main = "index.js"
+compatibility_date = "2025-07-19"
+
+# 不需要自定义域名，使用 workers.dev 子域名即可
+# 部署后会得到 https://deepseek-api-proxy.<your-subdomain>.workers.dev
+
+[observability]
+enabled = true
+head_sampling_rate = 1

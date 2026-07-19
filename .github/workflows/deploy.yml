@@ -22,7 +22,7 @@ jobs:
         working-directory: agent-app
 
       - name: Create .env file
-        run: echo "VITE_DEEPSEEK_API_KEY=${{ secrets.VITE_DEEPSEEK_API_KEY }}" > .env
+        run: echo "VITE_API_PROXY_URL=${{ vars.VITE_API_PROXY_URL }}" > .env
         working-directory: agent-app
 
       - name: Build
