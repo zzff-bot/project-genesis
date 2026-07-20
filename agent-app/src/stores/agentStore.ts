@@ -4,7 +4,6 @@ import { generateId } from '@/shared/types';
 import { buildSystemPrompt } from '@/engines/prompt/promptBuilder';
 import { api } from '@/shared/services/api';
 import { getToken } from '@/shared/services/api';
-import * as storage from '@/shared/services/storage';
 
 // ===== State =====
 interface AgentState {
@@ -24,6 +23,7 @@ interface AgentActions {
   getAgent: (id: string) => AgentConfig | undefined;
   loadAgents: () => Promise<void>;
   setCreating: (creating: boolean) => void;
+  reset: () => void;
 }
 
 function toAgentConfig(api: any): AgentConfig {
@@ -55,7 +55,7 @@ function toApiConfig(agent: Partial<AgentConfig> & { humanLike?: boolean }): Rec
 
 export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
   agents: [],
-  activeAgentId: storage.getActiveAgentId(),
+  activeAgentId: null,
   isCreating: false,
   isLoading: false,
   isInitialized: false,
@@ -77,11 +77,9 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
         createdAt: result.created_at,
       };
       set((state) => ({ agents: [...state.agents, newAgent] }));
-      // 同步更新 localStorage（保留本地缓存）
-      try { storage.addAgent(newAgent); } catch {}
       return newAgent;
     } catch {
-      // 离线回退：使用 localStorage
+      // 离线回退：使用 localStorage（仅当前用户可见）
       const fallback: AgentConfig = {
         ...config,
         id: generateId(),
@@ -90,7 +88,6 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
         systemPrompt,
         createdAt: Date.now(),
       };
-      storage.addAgent(fallback);
       set((state) => ({ agents: [...state.agents, fallback] }));
       return fallback;
     }
@@ -110,12 +107,9 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
     try {
       await api.updateAgent(id, { name: updated.name, config: toApiConfig(updated) });
     } catch {}
-    // 同步 localStorage
-    try { storage.saveAgents(get().agents); } catch {}
   },
 
   setActiveAgent: (id) => {
-    storage.setActiveAgentId(id);
     set({ activeAgentId: id });
   },
 
@@ -125,7 +119,6 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
       activeAgentId: state.activeAgentId === id ? null : state.activeAgentId,
     }));
     try { await api.deleteAgent(id); } catch {}
-    try { storage.deleteAgent(id); } catch {}
   },
 
   getAgent: (id) => get().agents.find((a) => a.id === id),
@@ -133,9 +126,8 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
   loadAgents: async () => {
     const token = getToken();
     if (!token) {
-      // 未登录：从 localStorage 加载
-      const localAgents = storage.loadAgents();
-      set({ agents: localAgents, isInitialized: true });
+      // 未登录：空状态，不从 localStorage 加载（避免跨账户数据泄露）
+      set({ agents: [], isInitialized: true });
       return;
     }
 
@@ -144,13 +136,14 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
       const result = await api.getAgents();
       const agents = result.agents.map(toAgentConfig);
       set({ agents, isInitialized: true, isLoading: false });
-      // 同步到 localStorage 作为缓存
-      try { storage.saveAgents(agents); } catch {}
     } catch {
-      // 回退到 localStorage
-      const localAgents = storage.loadAgents();
-      set({ agents: localAgents, isInitialized: true, isLoading: false });
+      // 加载失败保持空状态，不从 localStorage 回退（避免跨用户数据混入）
+      set({ agents: [], isInitialized: true, isLoading: false });
     }
+  },
+
+  reset: () => {
+    set({ agents: [], activeAgentId: null, isInitialized: false });
   },
 
   setCreating: (creating) => set({ isCreating: creating }),
