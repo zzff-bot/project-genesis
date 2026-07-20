@@ -3,11 +3,13 @@ import type { ChatMessage } from '@/shared/types';
 import { generateId } from '@/shared/types';
 import * as storage from '@/shared/services/storage';
 import { sendMessageStream } from '@/shared/services/deepseek';
+import { api, getToken } from '@/shared/services/api';
 import { useAgentStore } from './agentStore';
 
 // ===== State =====
 interface ChatState {
   sessions: Record<string, ChatMessage[]>;
+  conversationIds: Record<string, string>; // agentId → conversationId (server)
   isStreaming: boolean;
   error: string | null;
 }
@@ -19,12 +21,62 @@ interface ChatActions {
   getMessages: (agentId: string) => ChatMessage[];
   setSession: (agentId: string, messages: ChatMessage[]) => void;
   removeSession: (agentId: string) => void;
+  ensureConversation: (agentId: string, title?: string) => Promise<string>;
+  loadMessagesFromServer: (agentId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
   sessions: storage.loadAllSessions(),
+  conversationIds: {},
   isStreaming: false,
   error: null,
+
+  ensureConversation: async (agentId: string, title?: string) => {
+    const existing = get().conversationIds[agentId];
+    if (existing) return existing;
+
+    const token = getToken();
+    if (!token) return '';
+
+    try {
+      const conv = await api.createConversation(agentId, title);
+      set((state) => ({
+        conversationIds: { ...state.conversationIds, [agentId]: conv.id },
+      }));
+      return conv.id;
+    } catch { return ''; }
+  },
+
+  loadMessagesFromServer: async (agentId: string) => {
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      // 获取该 agent 的对话列表
+      const result = await api.getConversations(agentId);
+      if (result.conversations.length > 0) {
+        const conv = result.conversations[0];
+        // 保存 conversation mapping
+        set((state) => ({
+          conversationIds: { ...state.conversationIds, [agentId]: conv.id },
+        }));
+        // 加载消息
+        try {
+          const msgResult = await api.getMessages(conv.id);
+          const messages: ChatMessage[] = msgResult.messages.map((m) => ({
+            id: String(m.id),
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp,
+          }));
+          set((state) => ({
+            sessions: { ...state.sessions, [agentId]: messages },
+          }));
+          storage.saveSession(agentId, messages);
+        } catch {}
+      }
+    } catch {}
+  },
 
   sendMsg: async (content: string) => {
     const agentId = useAgentStore.getState().activeAgentId;
@@ -38,7 +90,10 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
 
     set({ error: null });
 
-    // 添加用户消息
+    // 确保服务端对话存在
+    const convId = await get().ensureConversation(agentId, content.slice(0, 30));
+
+    // 添加用户消息到状态
     const userMsg: ChatMessage = {
       id: generateId(),
       role: 'user',
@@ -51,7 +106,12 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     });
     storage.addMessage(agentId, userMsg);
 
-    // 添加空的助手消息（用于流式填充）
+    // 同步用户消息到服务端
+    if (convId) {
+      try { await api.addMessage(convId, 'user', content); } catch {}
+    }
+
+    // 添加空的助手消息
     const assistantMsg: ChatMessage = {
       id: generateId(),
       role: 'assistant',
@@ -63,18 +123,14 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       return { sessions: { ...state.sessions, [agentId]: [...existing, assistantMsg] } };
     });
 
-    // 流式获取回复
     set({ isStreaming: true });
 
     try {
       const history = storage.loadSession(agentId);
-      // 移除刚加的空消息（sendMessageStream 内部会构建正确的历史）
       const historyWithoutLast = history.slice(0, -1);
-
       let fullContent = '';
       const stream = sendMessageStream(agent.systemPrompt, historyWithoutLast, content);
 
-      // 使用 RAF 节流，避免每个 chunk 都触发 re-render
       let rafId: number | null = null;
       let pendingContent = '';
 
@@ -93,19 +149,12 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       for await (const chunk of stream) {
         fullContent += chunk;
         pendingContent = fullContent;
-
-        if (rafId === null) {
-          rafId = requestAnimationFrame(flushUpdate);
-        }
+        if (rafId === null) { rafId = requestAnimationFrame(flushUpdate); }
       }
 
-      // 确保最后一次更新被刷新
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        flushUpdate();
-      }
+      if (rafId !== null) { cancelAnimationFrame(rafId); flushUpdate(); }
 
-      // 流结束后追加助手消息到存储
+      // 追加到 localStorage
       const currentMessages = storage.loadSession(agentId);
       currentMessages.push({
         id: generateId(),
@@ -114,11 +163,14 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
         timestamp: Date.now(),
       });
       storage.saveSession(agentId, currentMessages);
+
+      // 同步助手消息到服务端
+      if (convId) {
+        try { await api.addMessage(convId, 'assistant', fullContent); } catch {}
+      }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : '发送消息失败';
       set({ error: errorMsg });
-
-      // 更新助手消息为错误提示
       set((state) => {
         const messages = state.sessions[agentId] || [];
         if (messages.length === 0) return state;
@@ -136,24 +188,23 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
     storage.clearSession(agentId);
     set((state) => ({
       sessions: { ...state.sessions, [agentId]: [] },
+      conversationIds: { ...state.conversationIds, [agentId]: undefined as any },
     }));
   },
 
-  getMessages: (agentId: string) => {
-    return get().sessions[agentId] || [];
-  },
+  getMessages: (agentId: string) => get().sessions[agentId] || [],
 
   setSession: (agentId: string, messages: ChatMessage[]) => {
-    set((state) => ({
-      sessions: { ...state.sessions, [agentId]: messages },
-    }));
+    set((state) => ({ sessions: { ...state.sessions, [agentId]: messages } }));
   },
 
   removeSession: (agentId: string) => {
     set((state) => {
       const newSessions = { ...state.sessions };
       delete newSessions[agentId];
-      return { sessions: newSessions };
+      const newConvIds = { ...state.conversationIds };
+      delete newConvIds[agentId];
+      return { sessions: newSessions, conversationIds: newConvIds };
     });
   },
 }));

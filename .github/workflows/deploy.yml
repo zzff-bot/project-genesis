@@ -23,7 +23,9 @@ jobs:
         working-directory: agent-app
 
       - name: Create .env file
-        run: echo "VITE_API_PROXY_URL=${{ vars.VITE_API_PROXY_URL }}" > .env
+        run: |
+          echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" > .env
+          echo "VITE_API_PROXY_URL=${{ vars.VITE_API_PROXY_URL }}" >> .env
         working-directory: agent-app
 
       - name: Build

@@ -6,8 +6,10 @@ import {
   LayoutDashboard, Bot, PlusCircle, MessageSquare,
   FileText, Database, GitBranch, Settings,
   ChevronLeft, Sun, Moon, Monitor,
+  Shield, LogOut,
 } from 'lucide-react';
 import { useSettings } from '@/shared/hooks/useSettings';
+import { useAuthStore } from '@/stores/authStore';
 
 interface NavItem {
   to: string;
@@ -36,6 +38,8 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const { themeMode, setThemeMode } = useSettings();
+  const { user, logout } = useAuthStore();
+  const isAdmin = user?.role === 'admin';
 
   const cycleTheme = () => {
     const modes: Array<'light' | 'dark' | 'auto'> = ['light', 'dark', 'auto'];
@@ -44,6 +48,10 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   };
 
   const ThemeIcon = themeMode === 'dark' ? Moon : themeMode === 'light' ? Sun : Monitor;
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <motion.aside
@@ -76,12 +84,56 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       {/* 导航 */}
       <nav className="flex-1 py-4 px-2 space-y-0.5 overflow-y-auto">
         <NavSection items={mainNav} collapsed={collapsed} />
+
+        {/* 管理后台入口（仅管理员可见） */}
+        {isAdmin && (
+          <>
+            <div className="my-3 mx-2.5 border-t border-[var(--color-border)]" />
+            <NavLink
+              to="/admin"
+              end
+              className={({ isActive }) => cn(
+                'flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-all duration-200',
+                isActive
+                  ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text)] font-medium'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text)]',
+                collapsed && 'justify-center px-0',
+              )}
+            >
+              <Shield size={18} />
+              {!collapsed && <span className="text-xs">管理后台</span>}
+            </NavLink>
+          </>
+        )}
+
         <div className="my-3 mx-2.5 border-t border-[var(--color-border)]" />
         <NavSection items={advancedNav} collapsed={collapsed} />
       </nav>
 
       {/* 底部操作 */}
       <div className="p-2 border-t border-[var(--color-border)] space-y-0.5">
+        {/* 用户信息 */}
+        {user && (
+          <div className={cn(
+            'flex items-center gap-2 px-2 py-1.5 mb-1',
+            collapsed && 'justify-center px-0',
+          )}>
+            <div className="w-7 h-7 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center text-[11px] font-medium text-[var(--color-text)] shrink-0">
+              {user.username.charAt(0).toUpperCase()}
+            </div>
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-[var(--color-text)] truncate">
+                  {user.username}
+                </p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)] truncate">
+                  {isAdmin ? '管理员' : '用户'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         <button
           onClick={cycleTheme}
           className={cn(
@@ -105,6 +157,19 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
           <Settings size={18} />
           {!collapsed && <span className="text-xs">设置</span>}
         </NavLink>
+
+        {/* 退出登录 */}
+        <button
+          onClick={handleLogout}
+          className={cn(
+            'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--color-text-tertiary)] hover:bg-[var(--intent-error-bg)]/30 hover:text-[var(--intent-error)] transition-colors cursor-pointer',
+            collapsed && 'justify-center px-0',
+          )}
+          title="退出登录"
+        >
+          <LogOut size={18} />
+          {!collapsed && <span className="text-xs">退出</span>}
+        </button>
 
         <button
           onClick={onToggleCollapse}

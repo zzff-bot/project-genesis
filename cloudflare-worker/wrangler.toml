@@ -1,12 +1,20 @@
-# Cloudflare Worker 配置
+# Project Genesis API Worker v2
 # 部署命令：npx wrangler deploy
 
-name = "deepseek-api-proxy"
+name = "genesis-api"
 main = "index.js"
-compatibility_date = "2025-07-19"
+compatibility_date = "2025-07-20"
 
-# 不需要自定义域名，使用 workers.dev 子域名即可
-# 部署后会得到 https://deepseek-api-proxy.<your-subdomain>.workers.dev
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "genesis-db"
+database_id = "e6089a16-518f-4ea2-8d2f-7251f8eb0711"
+
+# 环境变量（非敏感）
+# 敏感变量通过 wrangler secret put 设置: JWT_SECRET, ENCRYPTION_KEY, DEEPSEEK_API_KEY
+[vars]
+ADMIN_EMAILS = "zjunfeng609@gmail.com"
 
 [observability]
 enabled = true

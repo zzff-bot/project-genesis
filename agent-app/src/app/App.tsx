@@ -4,6 +4,7 @@ import { AgentProvider } from '@/contexts/AgentContext';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { AppShell } from '@/shared/layout';
 import { CommandPalette } from '@/shared/layout/CommandPalette';
+import { ProtectedRoute, AdminRoute } from '@/shared/layout';
 import { ToastContainer } from '@/shared/ui';
 import { LandingPage } from '@/features/landing';
 import { DashboardPage } from '@/features/dashboard';
@@ -11,15 +12,17 @@ import { AgentMarketplacePage, AgentCreatePage } from '@/features/agents';
 import { SettingsPage } from '@/features/settings';
 import { ChatPage } from '@/features/chat';
 import { ConversationsPage } from '@/features/conversations';
+import { LoginPage, RegisterPage } from '@/features/auth';
+import {
+  AdminLayout, AdminLoginPage, AdminDashboard,
+  AdminUsersPage, AdminAgentsPage, AdminConversationsPage,
+} from '@/features/admin';
 
 const DesignSystemPage = lazy(() =>
   import('@/features/design-system').then((m) => ({ default: m.DesignSystemPage })),
 );
 
-function ThemeSync() {
-  useTheme();
-  return null;
-}
+function ThemeSync() { useTheme(); return null; }
 
 export default function App() {
   return (
@@ -29,28 +32,48 @@ export default function App() {
         <CommandPalette />
         <ToastContainer />
         <Routes>
-          {/* 首页界面 — 全屏，无侧栏 */}
+          {/* 公开路由 */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-          {/* 主页界面 + 所有功能页 — 带侧栏 AppShell */}
+          {/* 管理员路由 — 完全独立，不与用户路由混用 */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/*" element={
+            <AdminRoute>
+              <AdminLayout>
+                <Routes>
+                  <Route path="/dashboard" element={<AdminDashboard />} />
+                  <Route path="/users" element={<AdminUsersPage />} />
+                  <Route path="/agents" element={<AdminAgentsPage />} />
+                  <Route path="/conversations" element={<AdminConversationsPage />} />
+                  <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+                </Routes>
+              </AdminLayout>
+            </AdminRoute>
+          } />
+
+          {/* 用户认证路由 */}
           <Route path="/*" element={
-            <AppShell>
-              <Routes>
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/agents" element={<AgentMarketplacePage />} />
-                <Route path="/agents/create" element={<AgentCreatePage />} />
-                <Route path="/agents/:agentId/edit" element={<AgentCreatePage />} />
-                <Route path="/chat/:agentId" element={<ChatPage />} />
-                <Route path="/chat/:agentId/:conversationId" element={<ChatPage />} />
-                <Route path="/conversations" element={<ConversationsPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/prompts" element={<PlaceholderPage title="提示词库" emoji="📝" description="精心编排的提示词模板，让你的 AI 对话更高效" />} />
-                <Route path="/knowledge" element={<PlaceholderPage title="知识库" emoji="📖" description="构建你的专属知识体系，让智能体更懂你" />} />
-                <Route path="/workflows" element={<PlaceholderPage title="工作流" emoji="⚡" description="自动化你的创意流程，释放更多可能性" />} />
-                <Route path="/design-system" element={<DesignSystemPage />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </AppShell>
+            <ProtectedRoute>
+              <AppShell>
+                <Routes>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/agents" element={<AgentMarketplacePage />} />
+                  <Route path="/agents/create" element={<AgentCreatePage />} />
+                  <Route path="/agents/:agentId/edit" element={<AgentCreatePage />} />
+                  <Route path="/chat/:agentId" element={<ChatPage />} />
+                  <Route path="/chat/:agentId/:conversationId" element={<ChatPage />} />
+                  <Route path="/conversations" element={<ConversationsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/prompts" element={<PlaceholderPage title="提示词库" emoji="📝" description="精心编排的提示词模板，让你的 AI 对话更高效" />} />
+                  <Route path="/knowledge" element={<PlaceholderPage title="知识库" emoji="📖" description="构建你的专属知识体系，让智能体更懂你" />} />
+                  <Route path="/workflows" element={<PlaceholderPage title="工作流" emoji="⚡" description="自动化你的创意流程，释放更多可能性" />} />
+                  <Route path="/design-system" element={<DesignSystemPage />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </AppShell>
+            </ProtectedRoute>
           } />
         </Routes>
       </AgentProvider>

@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Shield, User } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
   const [pos, setPos] = useState({ x: -999, y: -999 });
   const [visible, setVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,6 +19,14 @@ export default function LandingPage() {
   }, []);
 
   const handleLeave = () => setVisible(false);
+
+  const handleCreate = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <div
@@ -63,13 +73,41 @@ export default function LandingPage() {
         </div>
       )}
 
+      {/* ── 右上角导航按钮 ── */}
+      <div className="absolute z-20 top-6 right-6 flex items-center gap-4">
+        <motion.button
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 180, damping: 20 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => navigate('/admin/login')}
+          className="glow-btn-dark flex items-center gap-2.5"
+        >
+          <Shield size={17} />
+          管理员登录
+        </motion.button>
+        <motion.button
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.35, type: 'spring', stiffness: 180, damping: 20 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => navigate('/login')}
+          className="glow-btn-dark flex items-center gap-2.5"
+        >
+          <User size={17} />
+          用户登录
+        </motion.button>
+      </div>
+
       {/* ── 创造生命（左侧适中位置） ── */}
       <div className="absolute z-10 left-[12%]" style={{ top: '50%', transform: 'translateY(-50%)' }}>
         <motion.button
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, type: 'spring', stiffness: 180, damping: 20 }}
-          onClick={() => navigate('/dashboard')}
+          onClick={handleCreate}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.96 }}
           className="glow-btn-dark flex items-center gap-2.5"
